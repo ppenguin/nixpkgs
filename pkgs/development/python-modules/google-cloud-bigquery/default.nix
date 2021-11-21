@@ -18,11 +18,11 @@
 
 buildPythonPackage rec {
   pname = "google-cloud-bigquery";
-  version = "2.25.1";
+  version = "2.28.1";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "5ecf7c802cc6cf9cd79e79924616d8b7d35ba026f3313a4d90b8b4a28c72d93d";
+    sha256 = "sha256-DiNT2X5SktyM5URHtxL7nolJbnFLXKz8PVNmFNHEYdw=";
   };
 
   propagatedBuildInputs = [
@@ -53,7 +53,7 @@ buildPythonPackage rec {
     # requires credentials
     "test_bigquery_magic"
     "TestBigQuery"
-    "test_query_retry_539"
+    "test_arrow_extension_types_same_for_storage_and_REST_APIs_894"
     "test_query_retry_539"
     "test_list_rows_empty_table"
     "test_list_rows_page_size"

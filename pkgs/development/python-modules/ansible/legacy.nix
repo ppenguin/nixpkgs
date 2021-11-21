@@ -18,11 +18,11 @@
 
 buildPythonPackage rec {
   pname = "ansible";
-  version = "2.9.25";
+  version = "2.9.27";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-i88sL1xgnluREUyosOQibWA7h/K+cdyzOOi30626oo8=";
+    sha256 = "sha256-R5FZ5Qs72Qkg0GvFlBDDpR0/m+m04QKeEdHkotBwVzY=";
   };
 
   prePatch = ''

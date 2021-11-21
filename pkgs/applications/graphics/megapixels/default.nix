@@ -1,6 +1,7 @@
 { stdenv
 , lib
-, fetchFromSourcehut
+, fetchFromGitLab
+, glib
 , meson
 , ninja
 , pkg-config
@@ -26,22 +27,32 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "megapixels";
-  version = "1.2.0";
+  version = "1.4.0";
 
-  src = fetchFromSourcehut {
-    owner = "~martijnbraam";
+  src = fetchFromGitLab {
+    owner = "postmarketOS";
     repo = "megapixels";
     rev = version;
-    sha256 = "0jnfzwvq58p4ksyifma10i158r2fb7fv72ymibgcxbnx596xpjb2";
+    sha256 = "sha256-I7eevbIg+DEY9hnvat65J4Kem1FFNZc4XzaQQaewP/4=";
   };
 
-  nativeBuildInputs = [ meson ninja pkg-config wrapGAppsHook ];
+  nativeBuildInputs = [
+    glib
+    meson
+    ninja
+    pkg-config
+    wrapGAppsHook
+  ];
 
   buildInputs = [
     epoxy
     gtk4
     zbar
   ];
+
+  postInstall = ''
+    glib-compile-schemas $out/share/glib-2.0/schemas
+  '';
 
   preFixup = optionalString (tiffSupport || jpgSupport) ''
     gappsWrapperArgs+=(
@@ -51,8 +62,8 @@ stdenv.mkDerivation rec {
 
   meta = with lib; {
     description = "GTK4 camera application that knows how to deal with the media request api";
-    homepage = "https://sr.ht/~martijnbraam/Megapixels";
-    changelog = "https://git.sr.ht/~martijnbraam/megapixels/refs/${version}";
+    homepage = "https://gitlab.com/postmarketOS/megapixels";
+    changelog = "https://gitlab.com/postmarketOS/megapixels/-/tags/${version}";
     license = licenses.gpl3Only;
     maintainers = with maintainers; [ OPNA2608 dotlambda ];
     platforms = platforms.linux;

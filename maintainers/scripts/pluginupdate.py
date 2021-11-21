@@ -305,7 +305,7 @@ class CleanEnvironment(object):
 
 def get_current_plugins(editor: Editor) -> List[Plugin]:
     with CleanEnvironment():
-        cmd = ["nix", "eval", "--json", editor.get_plugins]
+        cmd = ["nix", "eval", "--impure", "--json", "--expr", editor.get_plugins]
         log.debug("Running command %s", cmd)
         out = subprocess.check_output(cmd)
     data = json.loads(out)
@@ -547,7 +547,6 @@ def update_plugins(editor: Editor, args):
 
     log.setLevel(LOG_LEVELS[args.debug])
     log.info("Start updating plugins")
-    nixpkgs_repo = git.Repo(editor.root, search_parent_directories=True)
     update = editor.get_update(args.input_file, args.outfile, args.proc)
 
     redirects = update()
@@ -556,6 +555,7 @@ def update_plugins(editor: Editor, args):
     autocommit = not args.no_commit
 
     if autocommit:
+        nixpkgs_repo = git.Repo(editor.root, search_parent_directories=True)
         commit(nixpkgs_repo, f"{editor.attr_path}: update", [args.outfile])
 
     if redirects:

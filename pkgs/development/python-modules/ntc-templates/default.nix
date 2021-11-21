@@ -1,25 +1,26 @@
 { lib
 , buildPythonPackage
 , fetchFromGitHub
-, isPy27
+, pythonOlder
 , poetry-core
 , textfsm
 , pytestCheckHook
-, ruamel_yaml
+, ruamel-yaml
 , yamllint
 }:
 
 buildPythonPackage rec {
   pname = "ntc-templates";
-  version = "2.2.2";
+  version = "3.0.0";
   format = "pyproject";
-  disabled = isPy27;
+
+  disabled = pythonOlder "3.6";
 
   src = fetchFromGitHub {
     owner = "networktocode";
     repo = pname;
     rev = "v${version}";
-    sha256 = "1f2hmayj95j3fzkyh9qvl58z0l9j9mlsi8b2r9aa2fy753y5a73b";
+    sha256 = "0kijzmmvq2rw7ima19w7lyb2p26a5w52k70fzbkaqqw78qzw8178";
   };
 
   nativeBuildInputs = [
@@ -32,7 +33,7 @@ buildPythonPackage rec {
 
   checkInputs = [
     pytestCheckHook
-    ruamel_yaml
+    ruamel-yaml
     yamllint
   ];
 

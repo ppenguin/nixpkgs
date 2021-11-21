@@ -2,7 +2,6 @@
 , stdenv
 , buildPythonPackage
 , fetchPypi
-, argh
 , pathtools
 , pyyaml
 , flaky
@@ -13,17 +12,16 @@
 
 buildPythonPackage rec {
   pname = "watchdog";
-  version = "2.1.3";
+  version = "2.1.6";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-5SNqjoYCq220uHNmTC01bDZas8rJb73sSXCtYWQV3UU=";
+    sha256 = "sha256-o25132x2fL9G9hqRxws7pxgR36CspKMk2UB6Bqi3ouc=";
   };
 
   buildInputs = lib.optionals stdenv.isDarwin [ CoreServices ];
 
   propagatedBuildInputs = [
-    argh
     pathtools
     pyyaml
   ];

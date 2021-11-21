@@ -91,6 +91,8 @@ let
       # and an extid attribute
       extensions = if nameArray != (lib.unique nameArray) then
         throw "Firefox addon name needs to be unique"
+      else if ! (lib.hasSuffix "esr" browser.name) then
+        throw "Nix addons are only supported in Firefox ESR"
       else builtins.map (a:
         if ! (builtins.hasAttr "extid" a) then
         throw "nixExtensions has an invalid entry. Missing extid attribute. Please use fetchfirefoxaddon"
@@ -288,7 +290,7 @@ let
         else
             for res in 16 32 48 64 128; do
             mkdir -p "$out/share/icons/hicolor/''${res}x''${res}/apps"
-            icon=( "${browser}/lib/"*"/browser/chrome/icons/default/default''${res}.png" )
+            icon=$( find "${browser}/lib/" -name "default''${res}.png" )
               if [ -e "$icon" ]; then ln -s "$icon" \
                 "$out/share/icons/hicolor/''${res}x''${res}/apps/${applicationName}.png"
               fi

@@ -84,7 +84,9 @@ stdenv.mkDerivation rec {
     description = "Task manager with Todoist support designed for GNU/Linux 🚀️";
     homepage = "https://planner-todo.web.app";
     license = licenses.gpl3;
-    maintainers = with maintainers; [ dtzWill ] ++ pantheon.maintainers;
+    maintainers = with maintainers; [ dtzWill ] ++ teams.pantheon.members;
+    platforms = platforms.linux;
+    mainProgram = "com.github.alainm23.planner";
   };
 }
 

@@ -51,6 +51,7 @@ in makeTest {
         connect-timeout = 1
       '';
 
+      virtualisation.memorySize = 2048;
       virtualisation.diskSize = 8 * 1024;
       virtualisation.emptyDiskImages = [
         # Small root disk for installer
@@ -68,7 +69,7 @@ in makeTest {
   testScript =
     ''
       def create_named_machine(name):
-          return create_machine(
+          machine = create_machine(
               {
                   "qemuFlags": "-cpu max ${
                     if system == "x86_64-linux" then "-m 1024"
@@ -78,6 +79,8 @@ in makeTest {
                   "name": name,
               }
           )
+          driver.machines.append(machine)
+          return machine
 
 
       # Install NixOS
@@ -93,7 +96,7 @@ in makeTest {
           "mkswap /dev/vda1 -L swap",
           # Install onto /mnt
           "nix-store --load-db < ${pkgs.closureInfo {rootPaths = [installedSystem];}}/registration",
-          "nixos-install --root /mnt --system ${installedSystem} --no-root-passwd",
+          "nixos-install --root /mnt --system ${installedSystem} --no-root-passwd --no-channel-copy >&2",
       )
       machine.shutdown()
 
@@ -108,7 +111,7 @@ in makeTest {
       )
 
       # Hibernate machine
-      hibernate.succeed("systemctl hibernate &")
+      hibernate.execute("systemctl hibernate >&2 &", check_return=False)
       hibernate.wait_for_shutdown()
 
       # Restore machine from hibernation, validate our ramfs file is there.

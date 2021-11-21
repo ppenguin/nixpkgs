@@ -86,9 +86,8 @@ stdenv.mkDerivation rec {
     '';
     homepage = "https://www.snippetpixie.com";
     license = licenses.gpl2Plus;
-    maintainers = with maintainers; [
-      ianmjones
-    ] ++ pantheon.maintainers;
+    maintainers = with maintainers; [ ianmjones ] ++ teams.pantheon.members;
     platforms = platforms.linux;
+    mainProgram = "com.github.bytepixie.snippetpixie";
   };
 }

@@ -24,6 +24,11 @@ let
 
     dontUseCmakeConfigure = true;
 
+    postPatch = ''
+      substituteInPlace buildSrc/linux.gradle \
+        --replace ', "-Werror=implicit-function-declaration"' ""
+    '';
+
     config = writeText "gradle.properties" (''
       CONF = Release
       JDK_HOME = ${openjdk11-bootstrap.home}
@@ -102,6 +107,9 @@ in makePackage {
   disallowedReferences = [ openjdk11-bootstrap ];
 
   passthru.deps = deps;
+
+  # Uses a lot of RAM, OOMs otherwise
+  requiredSystemFeatures = [ "big-parallel" ];
 
   meta = with lib; {
     homepage = "http://openjdk.java.net/projects/openjfx/";

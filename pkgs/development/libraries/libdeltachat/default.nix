@@ -1,7 +1,6 @@
 { lib
 , stdenv
 , fetchFromGitHub
-, fetchpatch
 , cmake
 , openssl
 , perl
@@ -16,28 +15,25 @@
 
 stdenv.mkDerivation rec {
   pname = "libdeltachat";
-  version = "1.56.0";
+  version = "1.65.0";
 
   src = fetchFromGitHub {
     owner = "deltachat";
     repo = "deltachat-core-rust";
     rev = version;
-    sha256 = "sha256-ZyVEI6q+GzHLEFH01TxS7NqwT7zqVgg0vduyf/fibB8=";
+    sha256 = "1k906pll4k8bc2xc9qd9g7q10rikbij2sy0w2wg9mf335rfym6z4";
   };
 
   patches = [
     # https://github.com/deltachat/deltachat-core-rust/pull/2589
-    (fetchpatch {
-      url = "https://github.com/deltachat/deltachat-core-rust/commit/408467e85d04fbbfd6bed5908d84d9e995943487.patch";
-      sha256 = "1j2ywaazglgl6370js34acrg0wrh0b7krqg05dfjf65n527lzn59";
-    })
+    ./darwin-dylib.patch
     ./no-static-lib.patch
   ];
 
   cargoDeps = rustPlatform.fetchCargoTarball {
     inherit src;
     name = "${pname}-${version}";
-    sha256 = "0pb1rcv45xa95ziqap94yy52fy02vh401iqsgi18nm1j6iyyngc8";
+    sha256 = "0jc9kyn5h3cn2ni5h3km47sfprpxr7hc96ca01yal2zyksm7zqxn";
   };
 
   nativeBuildInputs = [

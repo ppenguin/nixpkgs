@@ -2,8 +2,7 @@
 , lib
 , fetchurl
 , buildPythonPackage
-, isPy3k, pythonOlder, pythonAtLeast, isPy38
-, astor
+, isPy3k, pythonOlder, pythonAtLeast, astor
 , gast
 , google-pasta
 , wrapt
@@ -21,12 +20,10 @@
 , tensorflow-estimator_2
 , tensorflow-tensorboard_2
 , cudaSupport ? false
-, cudatoolkit ? null
-, cudnn ? null
-, nvidia_x11 ? null
+, cudatoolkit
+, cudnn
 , zlib
 , python
-, symlinkJoin
 , keras-applications
 , keras-preprocessing
 , addOpenGLRunpath
@@ -40,22 +37,15 @@
 # - the source build doesn't work on Darwin.
 # - the source build is currently brittle and not easy to maintain
 
-assert cudaSupport -> cudatoolkit != null
-                   && cudnn != null
-                   && nvidia_x11 != null;
-
 # unsupported combination
 assert ! (stdenv.isDarwin && cudaSupport);
 
 let
   packages = import ./binary-hashes.nix;
-
-  variant = if cudaSupport then "-gpu" else "";
-  pname = "tensorflow${variant}";
   metadataPatch = ./relax-dependencies-metadata.patch;
   patch = ./relax-dependencies.patch;
 in buildPythonPackage {
-  inherit pname;
+  pname = "tensorflow" + lib.optionalString cudaSupport "-gpu";
   inherit (packages) version;
   format = "wheel";
 
@@ -126,7 +116,6 @@ in buildPythonPackage {
         cudatoolkit.out
         cudatoolkit.lib
         cudnn
-        nvidia_x11
       ];
 
       libpaths = [

@@ -1,20 +1,19 @@
 { lib, stdenv, fetchurl, python3Packages, docutils, help2man, installShellFiles
 , abootimg, acl, apksigner, apktool, binutils-unwrapped, bzip2, cbfstool, cdrkit, colord, colordiff, coreutils, cpio, db, diffutils, dtc
-, e2fsprogs, file, findutils, fontforge-fonttools, ffmpeg, fpc, gettext, ghc, ghostscriptX, giflib, gnumeric, gnupg, gnutar
-, gzip, hdf5, imagemagick, jdk, libarchive, libcaca, llvm, lz4, mono, openssh, openssl, pdftk, pgpdump, poppler_utils, qemu, R
-, radare2, sng, sqlite, squashfsTools, tcpdump, odt2txt, unzip, wabt, xxd, xz, zip, zstd
-, fetchpatch
+, e2fsprogs, enjarify, file, findutils, fontforge-fonttools, ffmpeg, fpc, gettext, ghc, ghostscriptX, giflib, gnumeric, gnupg, gnutar
+, gzip, hdf5, imagemagick, jdk, libarchive, libcaca, llvm, lz4, mono, ocaml, oggvideotools, openssh, openssl, pdftk, pgpdump, poppler_utils, procyon, qemu, R
+, radare2, sng, sqlite, squashfsTools, tcpdump, ubootTools, odt2txt, unzip, wabt, xmlbeans, xxd, xz, zip, zstd
 , enableBloat ? false
 }:
 
 # Note: when upgrading this package, please run the list-missing-tools.sh script as described below!
 python3Packages.buildPythonApplication rec {
   pname = "diffoscope";
-  version = "181";
+  version = "192";
 
   src = fetchurl {
     url = "https://diffoscope.org/archive/diffoscope-${version}.tar.bz2";
-    sha256 = "sha256-wom3/r0oR7K8zdz1GxLImQ4Whc4WpzPGwjqXb39mxw4=";
+    sha256 = "sha256-ZaSE1yYznZIQV7yKyeBlqQzkgUn3CoadZY2fDA1/SnE=";
   };
 
   outputs = [ "out" "man" ];
@@ -22,12 +21,10 @@ python3Packages.buildPythonApplication rec {
   patches = [
     ./ignore_links.patch
 
-    # Fixes a minor issue with squashfs >=4.5 (which we already have). Already
-    # in upstream's master, can be removed when updating to 182.
-    (fetchpatch {
-      url = "https://salsa.debian.org/reproducible-builds/diffoscope/-/commit/9e410d6fd4def177c4b5f914e74f72a59fb1a316.patch";
-      sha256 = "sha256-Nj5Up48lfekH8KCPaucDb78QbtJ91O2SNiA4SqBrCBI=";
-    })
+    # due to https://salsa.debian.org/reproducible-builds/diffoscope/-/commit/953a599c2b903298b038b34abf515cea69f4fc19
+    # the version detection of LLVM is broken and the comparison result is compared against
+    # the expected result from LLVM 10 (rather than 7 which is our default).
+    ./fix-tests.patch
   ];
 
   postPatch = ''
@@ -43,7 +40,7 @@ python3Packages.buildPythonApplication rec {
   # Most of the non-Python dependencies here are optional command-line tools for various file-format parsers.
   # To help figuring out what's missing from the list, run: ./pkgs/tools/misc/diffoscope/list-missing-tools.sh
   #
-  # Still missing these tools: docx2txt dumpimage dumppdf dumpxsb enjarify lipo ocamlobjinfo oggDump otool procyon
+  # Still missing these tools: docx2txt lipo otool r2pipe
   pythonPath = [
       binutils-unwrapped bzip2 colordiff coreutils cpio db diffutils
       e2fsprogs file findutils fontforge-fonttools gettext gnutar gzip
@@ -56,9 +53,9 @@ python3Packages.buildPythonApplication rec {
     ])
     ++ lib.optionals stdenv.isLinux [ python3Packages.pyxattr acl cdrkit dtc ]
     ++ lib.optionals enableBloat ([
-      abootimg apksigner apktool cbfstool colord ffmpeg fpc ghc ghostscriptX giflib gnupg gnumeric
-      hdf5 imagemagick llvm jdk mono odt2txt openssh pdftk poppler_utils qemu R tcpdump wabt radare2
-    ] ++ (with python3Packages; [ binwalk guestfs h5py ]));
+      abootimg apksigner apktool cbfstool colord enjarify ffmpeg fpc ghc ghostscriptX giflib gnupg gnumeric
+      hdf5 imagemagick llvm jdk mono ocaml odt2txt oggvideotools openssh pdftk poppler_utils procyon qemu R tcpdump ubootTools wabt radare2 xmlbeans
+    ] ++ (with python3Packages; [ androguard binwalk guestfs h5py pdfminer ]));
 
   checkInputs = with python3Packages; [ pytestCheckHook ] ++ pythonPath;
 
@@ -82,6 +79,7 @@ python3Packages.buildPythonApplication rec {
     # Disable flaky tests on Darwin
     "test_non_unicode_filename"
     "test_listing"
+    "test_symlink_root"
   ];
 
   # flaky tests on Darwin

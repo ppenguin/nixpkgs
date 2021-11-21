@@ -1,8 +1,8 @@
-{ lib, buildGoModule, fetchurl, fetchFromGitHub, nixosTests }:
+{ lib, buildGo117Module, fetchurl, fetchFromGitHub, nixosTests, tzdata, wire }:
 
-buildGoModule rec {
+buildGo117Module rec {
   pname = "grafana";
-  version = "8.1.2";
+  version = "8.2.4";
 
   excludedPackages = "\\(alert_webhook_listener\\|clean-swagger\\|release_publisher\\|slow_proxy\\|slow_proxy_mac\\|macaron\\)";
 
@@ -10,17 +10,23 @@ buildGoModule rec {
     rev = "v${version}";
     owner = "grafana";
     repo = "grafana";
-    sha256 = "sha256-xlERuPkhPEHbfX7bVoc9CjqYe/P0Miiyu5c067LLS1M=";
+    sha256 = "sha256-dOV22xwdNLt0TnONzyDw0skGKuAYmiHafhFwhtRMN5M=";
   };
 
   srcStatic = fetchurl {
     url = "https://dl.grafana.com/oss/release/grafana-${version}.linux-amd64.tar.gz";
-    sha256 = "sha256-0fzCwkVHrBFiSKxvyTK0Xu8wHpyo58u+a9c7daaUCc0=";
+    sha256 = "sha256-nfHUpAnFc2lDGAoHB1fJjF08ndfNlaMJAlsMH+TJNy0=";
   };
 
-  vendorSha256 = "sha256-DFD6orsM5oDOLgHbCbrD+zNKVGbQT3Izm1VtNCZO40I=";
+  vendorSha256 = "sha256-VvmSNSChbxeLWEQDE4JPfoZckQZ7nG7ElupNCc175Fk=";
+
+  nativeBuildInputs = [ wire ];
 
   preBuild = ''
+    # Generate DI code that's required to compile the package.
+    # From https://github.com/grafana/grafana/blob/v8.2.3/Makefile#L33-L35
+    wire gen -tags oss ./pkg/server
+
     # The testcase makes an API call against grafana.com:
     #
     # --- Expected
@@ -47,6 +53,16 @@ buildGoModule rec {
     "-s" "-w" "-X main.version=${version}"
   ];
 
+  # Tests start http servers which need to bind to local addresses:
+  # panic: httptest: failed to listen on a port: listen tcp6 [::1]:0: bind: operation not permitted
+  __darwinAllowLocalNetworking = true;
+
+  # On Darwin, files under /usr/share/zoneinfo exist, but fail to open in sandbox:
+  # TestValueAsTimezone: date_formats_test.go:33: Invalid has err for input "Europe/Amsterdam": operation not permitted
+  preCheck = ''
+    export ZONEINFO=${tzdata}/share/zoneinfo
+  '';
+
   postInstall = ''
     tar -xvf $srcStatic
     mkdir -p $out/share/grafana
@@ -60,6 +76,7 @@ buildGoModule rec {
     license = licenses.agpl3;
     homepage = "https://grafana.com";
     maintainers = with maintainers; [ offline fpletz willibutz globin ma27 Frostman ];
-    platforms = platforms.linux;
+    platforms = platforms.linux ++ platforms.darwin;
+    mainProgram = "grafana-server";
   };
 }

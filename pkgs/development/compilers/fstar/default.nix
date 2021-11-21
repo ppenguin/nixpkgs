@@ -17,19 +17,20 @@ in
 
 stdenv.mkDerivation rec {
   pname = "fstar";
-  version = "2021.07.31";
+  version = "2021.10.16";
 
   src = fetchFromGitHub {
     owner = "FStarLang";
     repo = "FStar";
     rev = "v${version}";
-    sha256 = "KZTmphpt8nYpOd8EReAZ6iIkS4uY3ZziKQ3A70BL/90=";
+    sha256 = "03b693s7s7dzflv5qkf61gd8ji9bn6fq4pxd8pd3a6ppkwj6b5vc";
   };
 
   nativeBuildInputs = [ makeWrapper installShellFiles ];
 
   buildInputs = [
     z3
+    sedlex-2_3
   ] ++ (with ocamlPackages; [
     ocaml
     findlib
@@ -42,7 +43,6 @@ stdenv.mkDerivation rec {
     menhir
     menhirLib
     pprint
-    sedlex-2_3
     ppxlib
     ppx_deriving
     ppx_deriving_yojson
@@ -52,6 +52,8 @@ stdenv.mkDerivation rec {
   makeFlags = [ "PREFIX=$(out)" ];
 
   buildFlags = [ "libs" ];
+
+  enableParallelBuilding = true;
 
   postPatch = ''
     patchShebangs ulib/gen_mllib.sh
@@ -72,7 +74,8 @@ stdenv.mkDerivation rec {
     description = "ML-like functional programming language aimed at program verification";
     homepage = "https://www.fstar-lang.org";
     license = licenses.asl20;
+    changelog = "https://github.com/FStarLang/FStar/raw/v${version}/CHANGES.md";
     platforms = with platforms; darwin ++ linux;
-    maintainers = with maintainers; [ gebner ];
+    maintainers = with maintainers; [ gebner pnmadelaine ];
   };
 }
