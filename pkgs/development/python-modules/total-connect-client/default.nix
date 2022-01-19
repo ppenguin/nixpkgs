@@ -8,7 +8,7 @@
 
 buildPythonPackage rec {
   pname = "total-connect-client";
-  version = "2021.11.4";
+  version = "2021.12";
   format = "setuptools";
 
   disabled = pythonOlder "3.7";
@@ -17,7 +17,7 @@ buildPythonPackage rec {
     owner = "craigjmidwinter";
     repo = "total-connect-client";
     rev = version;
-    sha256 = "sha256-iggxKefrVZP4ljf8jGRrCAq0/xQLsr54L42KkdjBqgI=";
+    hash = "sha256-cgs6wIMSO8t8CPn6aR35sNcgfDaXDyFBldNEBOr850s=";
   };
 
   propagatedBuildInputs = [
@@ -26,15 +26,6 @@ buildPythonPackage rec {
 
   checkInputs = [
     pytestCheckHook
-  ];
-
-  preCheck = ''
-    export PYTHONPATH="total_connect_client:$PYTHONPATH"
-  '';
-
-  disabledTests = [
-    # Tests require network access
-    "tests_request"
   ];
 
   pythonImportsCheck = [

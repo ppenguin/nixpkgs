@@ -13,6 +13,7 @@
 buildPythonPackage rec {
   pname = "watchdog";
   version = "2.1.6";
+  format = "setuptools";
 
   src = fetchPypi {
     inherit pname version;
@@ -38,7 +39,14 @@ buildPythonPackage rec {
       --replace "--cov-report=term-missing" ""
   '';
 
-  pythonImportsCheck = [ "watchdog" ];
+  disabledTestPaths = [
+    # Tests are flaky
+    "tests/test_inotify_buffer.py"
+  ];
+
+  pythonImportsCheck = [
+    "watchdog"
+  ];
 
   meta = with lib; {
     description = "Python API and shell utilities to monitor file system events";
@@ -46,6 +54,7 @@ buildPythonPackage rec {
     license = licenses.asl20;
     maintainers = with maintainers; [ goibhniu ];
     # error: use of undeclared identifier 'kFSEventStreamEventFlagItemCloned'
-    broken = stdenv.isDarwin;
+    # builds fine on aarch64-darwin
+    broken = stdenv.isDarwin && !stdenv.isAarch64;
   };
 }

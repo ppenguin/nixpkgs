@@ -4,8 +4,7 @@ with haskellLib;
 
 self: super: {
 
-  # This compiler version needs llvm 9.x.
-  llvmPackages = pkgs.lib.dontRecurseIntoAttrs pkgs.llvmPackages_9;
+  llvmPackages = pkgs.lib.dontRecurseIntoAttrs self.ghc.llvmPackages;
 
   # Disable GHC 8.10.x core libraries.
   array = null;
@@ -49,11 +48,6 @@ self: super: {
 
   # cabal-install-parsers is written for Cabal 3.6
   cabal-install-parsers = super.cabal-install-parsers.override { Cabal = super.Cabal_3_6_2_0; };
-
-  # older version of cabal-install-parsers for reverse dependencies that use Cabal 3.4
-  cabal-install-parsers_0_4_2 = super.cabal-install-parsers_0_4_2.override {
-    Cabal = self.Cabal_3_4_1_0;
-  };
 
   # Jailbreak to fix the build.
   base-noprelude = doJailbreak super.base-noprelude;

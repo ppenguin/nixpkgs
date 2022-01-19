@@ -1,5 +1,5 @@
 { egl-wayland
-, epoxy
+, libepoxy
 , fetchurl
 , fontutil
 , lib
@@ -43,10 +43,10 @@
 stdenv.mkDerivation rec {
 
   pname = "xwayland";
-  version = "21.1.3";
+  version = "21.1.4";
   src = fetchurl {
     url = "mirror://xorg/individual/xserver/${pname}-${version}.tar.xz";
-    sha256 = "sha256-68J1fzn9TH2xZU/YZZFYnCEaogFy1DpU93rlZ87b+KI=";
+    sha256 = "sha256-GfZ5XzHPqOs1Kx5bPDefIu5gIOmHAf8sxnnajE8RWfc=";
   };
 
   depsBuildBuild = [
@@ -60,7 +60,7 @@ stdenv.mkDerivation rec {
   ];
   buildInputs = [
     egl-wayland
-    epoxy
+    libepoxy
     fontutil
     libGL
     libGLU

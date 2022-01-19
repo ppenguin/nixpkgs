@@ -11,17 +11,12 @@ in
 with python3.pkgs;
 buildPythonApplication rec {
   pname = "matrix-synapse";
-  version = "1.47.0";
+  version = "1.50.1";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-SS7ETkYQ3XBihOA6TQp+6f0PNhhlUvMBR6fEYmiLT3k=";
+    sha256 = "sha256-fdO+HJ1+fk+s65jLkPDiG+Ei89x5Fbkh9BUUFQ3NJ3M=";
   };
-
-  patches = [
-    ./0001-setup-add-homeserver-as-console-script.patch
-    ./0002-Expose-generic-worker-as-binary-under-NixOS.patch
-  ];
 
   buildInputs = [ openssl ];
 
@@ -36,6 +31,7 @@ buildPythonApplication rec {
     jinja2
     jsonschema
     lxml
+    matrix-common
     msgpack
     netaddr
     phonenumbers

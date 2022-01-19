@@ -1,5 +1,4 @@
 { lib
-, backports-datetime-fromisoformat
 , backports-zoneinfo
 , buildPythonPackage
 , cached-property
@@ -27,14 +26,16 @@
 
 buildPythonPackage rec {
   pname = "exchangelib";
-  version = "4.6.0";
-  disabled = pythonOlder "3.6";
+  version = "4.7.0";
+  format = "setuptools";
+
+  disabled = pythonOlder "3.7";
 
   src = fetchFromGitHub {
     owner = "ecederstrand";
     repo = pname;
     rev = "v${version}";
-    sha256 = "1lx5q3m3vhbx9xnm3v25xrrxvli1nh0lsza51ln4y3fk79ln91hv";
+    sha256 = "sha256-APT/esskyigt6u3A+KVTAlmZDMppeyKb9Ws+95hDLcM=";
   };
 
   propagatedBuildInputs = [
@@ -53,8 +54,6 @@ buildPythonPackage rec {
     tzlocal
   ] ++ lib.optionals (pythonOlder "3.9") [
     backports-zoneinfo
-  ] ++ lib.optionals (pythonOlder "3.7") [
-    backports-datetime-fromisoformat
   ];
 
   checkInputs = [
@@ -66,7 +65,9 @@ buildPythonPackage rec {
     requests-mock
   ];
 
-  pythonImportsCheck = [ "exchangelib" ];
+  pythonImportsCheck = [
+    "exchangelib"
+  ];
 
   meta = with lib; {
     description = "Client for Microsoft Exchange Web Services (EWS)";

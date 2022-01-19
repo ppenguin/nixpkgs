@@ -13,11 +13,11 @@
 
 buildPythonPackage rec {
   pname = "google-cloud-storage";
-  version = "1.42.3";
+  version = "2.0.0";
 
   src = fetchPypi {
     inherit pname version;
-    sha256 = "sha256-d1TU3KpFl1UUtATs4NortCkqy8Z8pVmmnhKhnVT82wY=";
+    sha256 = "sha256-pXoVrq0PnfvUOB8b/b6L+JgYpL11urhGyvzvstuEbEc=";
   };
 
   propagatedBuildInputs = [

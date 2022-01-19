@@ -296,7 +296,7 @@ in
     virtualisation.memorySize =
       mkOption {
         type = types.ints.positive;
-        default = 384;
+        default = 1024;
         description =
           ''
             The memory size in megabytes of the virtual machine.
@@ -306,7 +306,7 @@ in
     virtualisation.msize =
       mkOption {
         type = types.ints.positive;
-        default = pkgs.vmTools.default9PMsizeBytes;
+        default = 16384;
         description =
           ''
             The msize (maximum packet size) option passed to 9p file systems, in
@@ -329,6 +329,7 @@ in
       mkOption {
         type = types.str;
         default = "./${config.system.name}.qcow2";
+        defaultText = literalExpression ''"./''${config.system.name}.qcow2"'';
         description =
           ''
             Path to the disk image containing the root filesystem.
@@ -678,6 +679,7 @@ in
       mkOption {
         type = types.str;
         default = "./${config.system.name}-efi-vars.fd";
+        defaultText = literalExpression ''"./''${config.system.name}-efi-vars.fd"'';
         description =
           ''
             Path to nvram image containing UEFI variables.  The will be created
@@ -833,6 +835,7 @@ in
 
     # FIXME: Consolidate this one day.
     virtualisation.qemu.options = mkMerge [
+      [ "-device virtio-keyboard" ]
       (mkIf pkgs.stdenv.hostPlatform.isx86 [
         "-usb" "-device usb-tablet,bus=usb-bus.0"
       ])
@@ -996,4 +999,7 @@ in
       ];
 
   };
+
+  # uses types of services/x11/xserver.nix
+  meta.buildDocsInSandbox = false;
 }
