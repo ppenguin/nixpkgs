@@ -5887,6 +5887,11 @@ in {
   pandoc-attributes = callPackage ../development/python-modules/pandoc-attributes { };
 
   pandoc-include = callPackage ../development/python-modules/pandoc-include { };
+  pandoc-eqnos = callPackage ../development/python-modules/pandoc-eqnos { };
+  pandoc-fignos = callPackage ../development/python-modules/pandoc-fignos { };
+  pandoc-secnos = callPackage ../development/python-modules/pandoc-secnos { };
+  pandoc-tablenos = callPackage ../development/python-modules/pandoc-tablenos { };
+  pandoc-xnos = callPackage ../development/python-modules/pandoc-xnos { };
 
   pandocfilters = callPackage ../development/python-modules/pandocfilters { };
 
