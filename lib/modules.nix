@@ -138,7 +138,7 @@ rec {
             # support for that, in turn it's lazy in its values. This means e.g.
             # a `_module.args.pkgs = import (fetchTarball { ... }) {}` won't
             # start a download when `pkgs` wasn't evaluated.
-            type = types.lazyAttrsOf types.unspecified;
+            type = types.lazyAttrsOf types.raw;
             internal = true;
             description = "Arguments passed to each module.";
           };
@@ -151,8 +151,7 @@ rec {
           };
 
           _module.freeformType = mkOption {
-            # Disallow merging for now, but could be implemented nicely with a `types.optionType`
-            type = types.nullOr (types.uniq types.attrs);
+            type = types.nullOr types.optionType;
             internal = true;
             default = null;
             description = ''
@@ -762,13 +761,13 @@ rec {
       options = opt.options or
         (throw "Option `${showOption loc}' has type optionSet but has no option attribute, in ${showFiles opt.declarations}.");
       f = tp:
-        let optionSetIn = type: (tp.name == type) && (tp.functor.wrapped.name == "optionSet");
-        in
         if tp.name == "option set" || tp.name == "submodule" then
           throw "The option ${showOption loc} uses submodules without a wrapping type, in ${showFiles opt.declarations}."
-        else if optionSetIn "attrsOf" then types.attrsOf (types.submodule options)
-        else if optionSetIn "listOf"  then types.listOf  (types.submodule options)
-        else if optionSetIn "nullOr"  then types.nullOr  (types.submodule options)
+        else if (tp.functor.wrapped.name or null) == "optionSet" then
+          if tp.name == "attrsOf" then types.attrsOf (types.submodule options)
+          else if tp.name == "listOf" then types.listOf  (types.submodule options)
+          else if tp.name == "nullOr" then types.nullOr  (types.submodule options)
+          else tp
         else tp;
     in
       if opt.type.getSubModules or null == null

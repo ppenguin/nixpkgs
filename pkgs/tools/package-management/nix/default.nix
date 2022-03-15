@@ -24,6 +24,9 @@ let
     customMemoryManagement = false;
   }).overrideDerivation (args: {
     patches = (args.patches or [ ]) ++ [ ./patches/aws-sdk-cpp-TransferManager-ContentEncoding.patch ];
+
+    # only a stripped down version is build which takes a lot less resources to build
+    requiredSystemFeatures = null;
   });
 
   common = args:
@@ -58,20 +61,25 @@ in lib.makeExtensible (self: {
   };
 
   nix_2_6 = common {
-    version = "2.6.0";
-    sha256 = "sha256-xEPeMcNJVOeZtoN+d+aRwolpW8mFSEQx76HTRdlhPhg=";
+    version = "2.6.1";
+    sha256 = "sha256-E9iQ7f+9Z6xFcUvvfksTEfn8LsDfzmwrcRBC//5B3V0=";
   };
 
-  stable = self.nix_2_6;
+  nix_2_7 = common {
+    version = "2.7.0";
+    sha256 = "sha256-m8tqCS6uHveDon5GSro5yZor9H+sHeh+v/veF1IGw24=";
+  };
+
+  stable = self.nix_2_7;
 
   unstable = lib.lowPrio (common rec {
-    version = "2.7";
-    suffix = "pre20220127_${lib.substring 0 7 src.rev}";
+    version = "2.8";
+    suffix = "pre20220311_${lib.substring 0 7 src.rev}";
     src = fetchFromGitHub {
       owner = "NixOS";
       repo = "nix";
-      rev = "558c4ee3e370c9f9a6ea293df54ed6914a999f1c";
-      sha256 = "sha256-hMzKQflpgf3P7OdYKSnD1VMBSnF48XSRjaNX3bUJct4=";
+      rev = "d5322698a2abbc6d141e1d244e17b0d226a2f18b";
+      sha256 = "sha256-7rQSktGC8+DmeyGOnzFMy1QwAYnw4JJphv+lEwFCwfU=";
     };
   });
 })

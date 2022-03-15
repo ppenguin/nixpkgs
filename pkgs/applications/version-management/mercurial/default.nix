@@ -20,13 +20,18 @@ let
   inherit (python3Packages) docutils python fb-re2 pygit2 pygments;
 
   self = python3Packages.buildPythonApplication rec {
-    pname = "mercurial";
-    version = "6.0.2";
+    pname = "mercurial${lib.optionalString fullBuild "-full"}";
+    version = "6.1";
 
     src = fetchurl {
       url = "https://mercurial-scm.org/release/mercurial-${version}.tar.gz";
-      sha256 = "sha256-X7TDbThWKS6/WEBR1ZMG2WrYqjK1U3RSsdnEdvlasRo=";
+      sha256 = "sha256-hvmGReRWWpJWmR3N4it3uOfSLKb7tgwfTNvYRpo4zB8=";
     };
+
+    patches = [
+      # Fix the type of libc buffer for aarch64-linux
+      ./fix-rhg-type-aarch64.patch
+    ];
 
     format = "other";
 
@@ -34,9 +39,9 @@ let
 
     cargoDeps = if rustSupport then rustPlatform.fetchCargoTarball {
       inherit src;
-      name = "${pname}-${version}";
-      sha256 = "sha256-rIG57oPCTUz4HNJyuMBPlKTSh02ecF5052Q1P9wGq1s=";
-      sourceRoot = "${pname}-${version}/rust";
+      name = "mercurial-${version}";
+      sha256 = "sha256-+Y91gEC8vmyutNpVFAAL4MSg4KnpFbhH12CIuMRx0Mc=";
+      sourceRoot = "mercurial-${version}/rust";
     } else null;
     cargoRoot = if rustSupport then "rust" else null;
 
@@ -180,7 +185,11 @@ in
         buildInputs = self.buildInputs ++ self.propagatedBuildInputs;
         nativeBuildInputs = self.nativeBuildInputs;
 
-        phases = [ "installPhase" "installCheckPhase" ];
+        dontUnpack = true;
+        dontPatch = true;
+        dontConfigure = true;
+        dontBuild = true;
+        doCheck = false;
 
         installPhase = ''
           runHook preInstall

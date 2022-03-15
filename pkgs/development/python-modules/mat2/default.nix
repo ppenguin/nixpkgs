@@ -1,4 +1,5 @@
 { lib
+, stdenv
 , buildPythonPackage
 , python
 , pythonOlder
@@ -7,7 +8,7 @@
 , bubblewrap
 , exiftool
 , ffmpeg
-, mime-types
+, mailcap
 , wrapGAppsHook
 , gdk-pixbuf
 , gobject-introspection
@@ -37,7 +38,6 @@ buildPythonPackage rec {
     # hardcode paths to some binaries
     (substituteAll ({
       src = ./paths.patch;
-      bwrap = "${bubblewrap}/bin/bwrap";
       exiftool = "${exiftool}/bin/exiftool";
       ffmpeg = "${ffmpeg}/bin/ffmpeg";
     } // lib.optionalAttrs dolphinIntegration {
@@ -51,6 +51,11 @@ buildPythonPackage rec {
     (substituteAll {
       src = ./fix_poppler.patch;
       poppler_path = "${poppler_gi}/lib/girepository-1.0";
+    })
+  ] ++ lib.optionals (stdenv.hostPlatform.isLinux) [
+    (substituteAll {
+      src = ./bubblewrap-path.patch;
+      bwrap = "${bubblewrap}/bin/bwrap";
     })
   ];
 
