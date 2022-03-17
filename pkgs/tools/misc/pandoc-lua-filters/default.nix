@@ -18,7 +18,7 @@ stdenv.mkDerivation rec {
   installPhase = ''
     runHook preInstall
 
-    install -Dt $out/share/pandoc/filters **/*.lua
+    install -Dt ${out}/share/pandoc/filters **/*.lua
 
     runHook postInstall
   '';
