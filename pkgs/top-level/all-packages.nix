@@ -34440,6 +34440,7 @@ with pkgs;
   xzoom = callPackage ../tools/X11/xzoom {};
 
   yabai = callPackage ../os-specific/darwin/yabai { };
+  yabai_4_x = callPackage ../os-specific/darwin/yabai/yabai_4_x.nix { };
 
   yabause = libsForQt5.callPackage ../applications/emulators/yabause {
     freeglut = null;
