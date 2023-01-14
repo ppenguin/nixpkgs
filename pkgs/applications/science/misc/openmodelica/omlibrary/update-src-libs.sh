@@ -5,12 +5,13 @@ CWD=$PWD
 
 chko() {
   (
-    T=`mktemp -d`
-    trap "rm -rf $T" EXIT INT PIPE
+    T="$(mktemp -d)"
+    # trap "rm -rf $T" EXIT INT PIPE
     cd $T
+    echo "TMP work dir: $T" >&2
     cat >check.nix <<EOF
 with import <nixpkgs> {};
-fetchgit `cat $CWD/../mkderivation/src-main.nix`
+fetchgit $(cat "$CWD/../mkderivation/src-main.nix")
 EOF
     nix-build check.nix
     cat result/libraries/Makefile.libs
