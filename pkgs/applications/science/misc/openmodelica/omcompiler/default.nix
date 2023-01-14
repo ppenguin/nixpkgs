@@ -45,7 +45,7 @@ mkOpenModelicaDerivation ({
   '';
 
   preFixup = ''
-    for entry in $(find $out -name libipopt.so); do
+    for entry in $(find $out -name libipopt.so -o -name libzmq.so); do
       patchelf --shrink-rpath --allowed-rpath-prefixes /nix/store $entry
       patchelf --set-rpath '$ORIGIN':"$(patchelf --print-rpath $entry)" $entry
     done
