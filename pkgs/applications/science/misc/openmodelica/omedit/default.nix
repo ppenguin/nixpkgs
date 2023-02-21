@@ -1,6 +1,7 @@
 { lib
 , jre8
 , qmake
+, git
 , qtbase
 , qttools
 , qtwebkit
@@ -9,6 +10,8 @@
 , wrapQtAppsHook
 , openmodelica
 , openscenegraph
+, omniorb
+, libGLU
 , mkOpenModelicaDerivation
 }:
 with openmodelica;
@@ -18,9 +21,9 @@ mkOpenModelicaDerivation rec {
   omdeps = [ omcompiler omplot omparser omsimulator ];
   omautoconf = true;
 
-  nativeBuildInputs = [ jre8 qmake qtbase qttools wrapQtAppsHook ];
+  nativeBuildInputs = [ jre8 qmake qtbase qttools wrapQtAppsHook git ]; # git necessary to include version info
 
-  buildInputs = [ qtwebkit openscenegraph qtxmlpatterns binutils ];
+  buildInputs = [ qtwebkit openscenegraph libGLU omniorb qtxmlpatterns binutils ];
 
   postPatch = ''
     sed -i ''$(find -name qmake.m4) -e '/^\s*LRELEASE=/ s|LRELEASE=.*$|LRELEASE=${lib.getDev qttools}/bin/lrelease|'
