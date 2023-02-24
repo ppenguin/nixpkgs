@@ -11,8 +11,8 @@
 let
   major = "11";
   minor = "0";
-  update = "15";
-  build = "10";
+  update = "17";
+  build = "8";
 
   openjdk = stdenv.mkDerivation rec {
     pname = "openjdk" + lib.optionalString headless "-headless";
@@ -22,7 +22,7 @@ let
       owner = "openjdk";
       repo = "jdk${major}u";
       rev = "jdk-${version}";
-      sha256 = "le2JDxPJPSuga4JxLJNRZwCaodptSb2kh4TsJXumTXs=";
+      sha256 = "sha256-kvgLYqQZPqyuigVyzbDHc3TMff0clvzM8IdzYLYcxPU=";
     };
 
     nativeBuildInputs = [ pkg-config autoconf unzip ];
@@ -72,7 +72,7 @@ let
     # Workaround for
     # `cc1plus: error: '-Wformat-security' ignored without '-Wformat' [-Werror=format-security]`
     # when building jtreg
-    NIX_CFLAGS_COMPILE = "-Wformat";
+    env.NIX_CFLAGS_COMPILE = "-Wformat";
 
     NIX_LDFLAGS = toString (lib.optionals (!headless) [
       "-lfontconfig" "-lcups" "-lXinerama" "-lXrandr" "-lmagic"
@@ -131,12 +131,12 @@ let
     postFixup = ''
       # Build the set of output library directories to rpath against
       LIBDIRS=""
-      for output in $outputs; do
+      for output in $(getAllOutputNames); do
         if [ "$output" = debug ]; then continue; fi
         LIBDIRS="$(find $(eval echo \$$output) -name \*.so\* -exec dirname {} \+ | sort | uniq | tr '\n' ':'):$LIBDIRS"
       done
       # Add the local library paths to remove dependencies on the bootstrap
-      for output in $outputs; do
+      for output in $(getAllOutputNames); do
         if [ "$output" = debug ]; then continue; fi
         OUTPUTDIR=$(eval echo \$$output)
         BINLIBS=$(find $OUTPUTDIR/bin/ -type f; find $OUTPUTDIR -name \*.so\*)

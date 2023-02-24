@@ -14,7 +14,7 @@ in
 
     security.polkit.enable = mkEnableOption (lib.mdDoc "polkit");
 
-    security.polkit.debug = mkEnableOption (lib.mdDoc "debug logs from polkit. This is required in order to see log messages from rule definitions.");
+    security.polkit.debug = mkEnableOption (lib.mdDoc "debug logs from polkit. This is required in order to see log messages from rule definitions");
 
     security.polkit.extraConfig = mkOption {
       type = types.lines;
@@ -113,7 +113,7 @@ in
       group = "polkituser";
     };
 
-    users.groups.polkituser = {};
+    users.groups.polkituser.gid = config.ids.gids.polkituser;
   };
 
 }

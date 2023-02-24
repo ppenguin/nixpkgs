@@ -14,13 +14,15 @@
 
 buildPythonPackage rec {
   pname = "caldav";
-  version = "0.11.0";
+  version = "1.1.3";
+
+  format = "setuptools";
 
   src = fetchFromGitHub {
     owner = "python-caldav";
     repo = pname;
     rev = "refs/tags/v${version}";
-    hash = "sha256-fTl2mxQncsITSC8XpcCBYWYmjDboiueGkNGHbQxn+F8=";
+    hash = "sha256-ZilsCYr1M2WKSz/g5JV41JVsuHopPerxOevoG7FrEjQ=";
   };
 
   propagatedBuildInputs = [
@@ -32,7 +34,7 @@ buildPythonPackage rec {
     recurring-ical-events
   ];
 
-  checkInputs = [
+  nativeCheckInputs = [
     pytestCheckHook
     tzlocal
     pytz
