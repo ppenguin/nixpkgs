@@ -24,8 +24,8 @@ mkOpenModelicaDerivation {
   '';
 
   meta = with lib; {
-    description = "The Modelica Standard Library and some integrated libraries. (As of v1.20 the latter are in a separate repo.)";
-    homepage = "https://openmodelica.org";
+    description = "A collection of Modelica libraries to use with OpenModelica";
+    homepage = "https://github.com/OpenModelica/OMLibraries";
     license = licenses.gpl3Only;
     maintainers = with maintainers; [ balodja smironov ];
     platforms = platforms.linux;
